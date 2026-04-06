@@ -2,6 +2,6 @@ from pydantic import BaseModel
 
 class Client(BaseModel):
   id_: int | None
-  nome: str
+  name: str
   email: str
   phone: str

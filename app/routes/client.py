@@ -1,29 +1,33 @@
-from fastapi import APIRouter
+from typing import Annotated
+
+from fastapi import APIRouter, Depends, HTTPException
 
 from app.models.client import Client
-
+from app.database.client_repo import ClientRepo
+from app.dependencies import get_client_repo
 router = APIRouter(
   prefix="/clients"
 )
 
 CLIENT_LIST = [
-    Client(nome="Eduardo",email="teste@gmail.com", phone="123456", id_=1),
-    Client(nome="Raphaela",email="tesasde@gmail.com", phone="12345426", id_=2),
-    Client(nome="Marcos",email="tesasde@gmail.com", phone="12345156", id_=3)
+    Client(name="Eduardo",email="teste@gmail.com", phone="123456", id_=1),
+    Client(name="Raphaela",email="tesasde@gmail.com", phone="12345426", id_=2),
+    Client(name="Marcos",email="tesasde@gmail.com", phone="12345156", id_=3)
   ]
 
 
 @router.get("/", response_model=list[Client])
-async def list_clients():
-  return CLIENT_LIST
+async def list_clients(client_repo: Annotated[ClientRepo, Depends(get_client_repo)]):
+  return await client_repo.list_clients()
 
 @router.get("/{client_id}", response_model=Client | None)
-async def get_client(client_id: int):
-  for client in CLIENT_LIST:
-    if client.id_ == client_id:
-      return client
+async def get_client(client_repo: Annotated[ClientRepo, Depends(get_client_repo)],
+                     client_id: int):
+  client = await client_repo.get_client(client_id=client_id)
+  if not client:
+    raise HTTPException(status_code=404, detail="Client not found")
   
-  return None
+  return client
 
 
 @router.post("/create/")

@@ -4,6 +4,7 @@ from contextlib import contextmanager
 class LocalDatabase():
   def __init__(self, file_name = 'techlog.db'):
     self.file_name = file_name
+    self.init_db()
 
   @contextmanager
   def connect(self):
@@ -29,3 +30,5 @@ class LocalDatabase():
                      )
   ''')
       conn.commit()
+
+    print("database created sucessfully!")
