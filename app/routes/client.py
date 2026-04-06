@@ -10,9 +10,9 @@ router = APIRouter(
 )
 
 CLIENT_LIST = [
-    Client(name="Eduardo",email="teste@gmail.com", phone="123456", id_=1),
-    Client(name="Raphaela",email="tesasde@gmail.com", phone="12345426", id_=2),
-    Client(name="Marcos",email="tesasde@gmail.com", phone="12345156", id_=3)
+    Client(name="Eduardo",email="teste@gmail.com", phone="123456", id=1),
+    Client(name="Raphaela",email="tesasde@gmail.com", phone="12345426", id=2),
+    Client(name="Marcos",email="tesasde@gmail.com", phone="12345156", id=3)
   ]
 
 

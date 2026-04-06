@@ -1,7 +1,12 @@
 from pydantic import BaseModel
 
 class Client(BaseModel):
-  id_: int | None
+  id: int | None
+  name: str
+  email: str
+  phone: str
+
+class CreateAndUpdateClient(BaseModel):
   name: str
   email: str
   phone: str
