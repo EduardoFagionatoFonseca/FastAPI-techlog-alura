@@ -30,14 +30,14 @@ class ClientRepo:
   async def create_client(self, client: CreateAndUpdateClient) -> Client:
     with self.db.connect() as conn:
       cursor = conn.cursor()
-      cursor.execute("INSERT INTO CLIENT (name, email, phone) VALUES (?,?,?)", (client.name, client.email, client.phone))
+      cursor.execute("INSERT INTO clients (name, email, phone) VALUES (?,?,?)", (client.name, client.email, client.phone))
       client_id = cursor.lastrowid
       return Client(id=client_id, name=client.name, email=client.email, phone=client.phone)
 
   async def update_client(self, client_id: int, client: CreateAndUpdateClient) -> Client | None:
     with self.db.connect() as conn:
       cursor = conn.cursor()
-      cursor.execute("UPDATE clients SET name = ?, email = ?, phone = ? WHERE id = ?", (client.name, client.email, client.phone))
+      cursor.execute("UPDATE clients SET name = ?, email = ?, phone = ? WHERE id = ?", (client.name, client.email, client.phone, client_id))
       if cursor.rowcount == 0:
         return None
       return Client(id=client_id, name=client.name, email=client.email, phone=client.phone)
