@@ -2,7 +2,7 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException
 
-from app.models.client import Client
+from app.models.client import Client, CreateAndUpdateClient
 from app.database.client_repo import ClientRepo
 from app.dependencies import get_client_repo
 router = APIRouter(
@@ -30,13 +30,20 @@ async def get_client(client_repo: Annotated[ClientRepo, Depends(get_client_repo)
   return client
 
 
-@router.post("/create/")
-async def create_client(client: Client):
-  print(client)
-  return {"message": "Item created"}
-#   last_client_id = CLIENT_LIST[-1].id_
-#   if not last_client_id:
-#     last_client_id = 0
-#   client = item
-#   client.id_ = last_client_id + 1
-#   return item
+@router.post("/", response_model=Client, status_code=201)
+async def create_user(client_repo: Annotated[ClientRepo, Depends(get_client_repo)],
+                      client: CreateAndUpdateClient):
+  return await client_repo.create_client(client)
+
+@router.put("/{client_id}", response_model=Client | None)
+async def update_client(client_repo: Annotated[ClientRepo, Depends(get_client_repo)], client_id: int, client: CreateAndUpdateClient):
+  updated_client = await client_repo.update_client(client_id, client)
+  if not client:
+    raise HTTPException(status_code=404, detail="Client not found")
+  return updated_client
+
+@router.delete("/{client_id}", status_code=204)
+async def delete_client(client_repo: Annotated[ClientRepo, Depends(get_client_repo)],client_id: int):
+  sucess = await client_repo.delete_client(client_id)
+  if not sucess:
+    raise HTTPException(status_code=404, detail="Client not found")

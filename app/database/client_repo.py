@@ -33,3 +33,17 @@ class ClientRepo:
       cursor.execute("INSERT INTO CLIENT (name, email, phone) VALUES (?,?,?)", (client.name, client.email, client.phone))
       client_id = cursor.lastrowid
       return Client(id=client_id, name=client.name, email=client.email, phone=client.phone)
+
+  async def update_client(self, client_id: int, client: CreateAndUpdateClient) -> Client | None:
+    with self.db.connect() as conn:
+      cursor = conn.cursor()
+      cursor.execute("UPDATE clients SET name = ?, email = ?, phone = ? WHERE id = ?", (client.name, client.email, client.phone))
+      if cursor.rowcount == 0:
+        return None
+      return Client(id=client_id, name=client.name, email=client.email, phone=client.phone)
+    
+  async def delete_client(self, client_id: int) -> bool:
+    with self.db.connect() as conn:
+      cursor = conn.cursor()
+      cursor.execute("DELETE FROM clients WHERE id = ?", (client_id,))
+      return cursor.rowcount > 0
